@@ -1,7 +1,6 @@
 import 'package:double_tap_to_exit/double_tap_to_exit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skroo/logics/number_of_player_provider.dart';
 import 'package:skroo/logics/players_provider.dart';
 import 'package:skroo/presentation/widgets/add_players_bottom_sheet.dart';
 import 'package:skroo/presentation/widgets/custom_text_field.dart';
@@ -56,7 +55,7 @@ class _HomeViewState extends State<HomeView> {
                           builder: (BuildContext context) {
                             return const AddPlayersBottomSheet();
                           });
-                    } on NumberOfPlayerException catch (e) {
+                    } on PlayersProviderException catch (e) {
                       showsnackbar(context, e.message);
                     } catch (e) {
                       showsnackbar(context, 'please enter a number');

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skroo/logics/players_provider.dart';
-import 'package:skroo/logics/number_of_player_provider.dart';
 import 'package:skroo/presentation/widgets/custom_text_field.dart';
 import 'package:skroo/presentation/widgets/show_snackbar.dart';
 
@@ -18,7 +17,7 @@ class _CustomBottomSheetState extends State<AddScoreBottomSheet> {
   @override
   Widget build(BuildContext context) {
     List<TextEditingController> scorecontrollers = List.generate(
-        Provider.of<NumberOfPlayerProvider>(context).numberOfPlayer,
+        Provider.of<PlayersProvider>(context).numberOfPlayer,
         (index) => TextEditingController());
     return Padding(
       padding:
@@ -40,8 +39,8 @@ class _CustomBottomSheetState extends State<AddScoreBottomSheet> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: Provider.of<NumberOfPlayerProvider>(context)
-                      .numberOfPlayer,
+                  itemCount:
+                      Provider.of<PlayersProvider>(context).numberOfPlayer,
                   itemBuilder: (BuildContext context, int index) =>
                       CustomTextField(
                     hint:
@@ -55,6 +54,14 @@ class _CustomBottomSheetState extends State<AddScoreBottomSheet> {
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
                     try {
+                      if (Provider.of<PlayersProvider>(context, listen: false)
+                              .currntRound ==
+                          5) {
+                        Navigator.pop(context);
+                        showsnackbar(context,
+                            'winner is ${Provider.of<PlayersProvider>(context, listen: false).winner().name} start a new game');
+                        return;
+                      }
                       Provider.of<PlayersProvider>(context, listen: false)
                           .addScore(
                               scorecontrollers.map((e) => e.text).toList());

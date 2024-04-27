@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skroo/logics/players_provider.dart';
-import 'package:skroo/logics/number_of_player_provider.dart';
 import 'package:skroo/presentation/widgets/custom_text_field.dart';
 import 'package:skroo/presentation/widgets/show_snackbar.dart';
 
@@ -18,7 +17,7 @@ class _CustomBottomSheetState extends State<AddPlayersBottomSheet> {
   @override
   Widget build(BuildContext context) {
     List<TextEditingController> namescontrollers = List.generate(
-        Provider.of<NumberOfPlayerProvider>(context).numberOfPlayer,
+        Provider.of<PlayersProvider>(context).numberOfPlayer,
         (index) => TextEditingController());
     return Padding(
       padding:
@@ -39,8 +38,8 @@ class _CustomBottomSheetState extends State<AddPlayersBottomSheet> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: Provider.of<NumberOfPlayerProvider>(context)
-                      .numberOfPlayer,
+                  itemCount:
+                      Provider.of<PlayersProvider>(context).numberOfPlayer,
                   itemBuilder: (BuildContext context, int index) =>
                       CustomTextField(
                     hint: 'player${index + 1} name',
@@ -54,7 +53,9 @@ class _CustomBottomSheetState extends State<AddPlayersBottomSheet> {
                   if (formKey.currentState!.validate()) {
                     try {
                       asignplayer(context, namescontrollers);
-                      Navigator.pushNamed(context, '/Dashboard');
+                      NavigatorState nav = Navigator.of(context);
+                      nav.pop();
+                      nav.pushNamed('/Dashboard');
                     } on PlayersProvider catch (e) {
                       showsnackbar(context, e.message);
                     }

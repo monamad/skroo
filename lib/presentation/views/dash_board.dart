@@ -9,7 +9,7 @@ class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
 
   TableRow buildheaderrow(context) {
-    List<Text> elements = Provider.of<PlayersProvider>(context)
+    List<Widget> elements = Provider.of<PlayersProvider>(context)
         .players
         .map(
           (e) => Text(
@@ -38,13 +38,18 @@ class Dashboard extends StatelessWidget {
       ),
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              NavigatorState nav = Navigator.of(context);
-              nav.pop();
-              nav.pop();
-            },
+          leading: DoubleTapToExit(
+            snackBar: const SnackBar(
+              content: Text("are you sure you want to exit ?"),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Provider.of<PlayersProvider>(context, listen: false).reset();
+                NavigatorState nav = Navigator.of(context);
+                nav.pop();
+              },
+            ),
           ),
           title: const Text('Dashboard'),
           actions: [
@@ -63,45 +68,64 @@ class Dashboard extends StatelessWidget {
           centerTitle: true,
         ),
         body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
           children: [
             Table(
               border: TableBorder.all(),
               children: createtable(context),
             ),
+            SizedBox(
+              height: 20,
+            ),
             Table(border: TableBorder.all(), children: [
-              TableRow(
-                decoration: const BoxDecoration(),
-                children: [
-                  SizedBox(
-                      height: 50,
-                      child: Center(
-                          child: const Text(
-                        'Total',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      ))),
-                  for (int i = 0;
-                      i < Provider.of<PlayersProvider>(context).players.length;
-                      i++)
-                    SizedBox(
-                      height: 50,
-                      child: Center(
-                        child: Text(
-                          '${Provider.of<PlayersProvider>(context).players[i].totalScore}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+              totalScoreRow(context),
             ]),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              width: double.infinity,
+              height: 50,
+              color: Colors.brown,
+              child: Center(
+                child: Text(
+                  'current round is ${Provider.of<PlayersProvider>(context).currntRound + 1}',
+                ),
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  TableRow totalScoreRow(BuildContext context) {
+    return TableRow(
+      decoration: const BoxDecoration(),
+      children: [
+        SizedBox(
+            height: 50,
+            child: Center(
+                child: const Text(
+              'Total',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ))),
+        for (int i = 0;
+            i < Provider.of<PlayersProvider>(context).players.length;
+            i++)
+          SizedBox(
+            height: 50,
+            child: Center(
+              child: Text(
+                '${Provider.of<PlayersProvider>(context).players[i].totalScore}',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
